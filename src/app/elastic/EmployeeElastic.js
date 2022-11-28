@@ -18,7 +18,7 @@ export const saveDocument = async(doc) => {
     } = doc
 
     logger.info(`[ELASTIC_SAVE] Trying to save into elastic`);
-    await elasticClient.index({
+    await elasticClient.create({
         index: process.env.EMPLOYEE_INDEX,
         id: id,
         document: {
@@ -32,7 +32,12 @@ export const saveDocument = async(doc) => {
             job,
             department
         }
+    }).then(() => {
+        logger.info(`[ELASTIC_SAVE] Document has been saved successfully`);
+        return;
+    })
+    .catch(err => {
+        logger.error(`[ELASTIC_SAVE_ERROR]Error trying to save document into elastic error: `, err);
+        return;
     });
-
-    logger.info(`[ELASTIC_SAVE] Document has been saved successfully`);
 }
