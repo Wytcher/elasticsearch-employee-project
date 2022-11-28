@@ -1,0 +1,26 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Swagger Employee Service",
+        "description": "REST calls to Employee Service",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Local"
+        }
+    ],
+    "tag": [],
+    "paths": {
+    },
+    "components": {
+        "secutirySchemes": {
+            "Authorization": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization"
+            }
+        }
+    }
+}
