@@ -8,6 +8,22 @@ import {
 import logger from "../../logger/logger.js";
 
 class EmployeeRepository {
+
+  async getEmployees(req){
+    const limit = req.query.limit || 1;
+    const page = req.query.page || 0;
+    return await Employee.findAndCountAll({
+      limit,
+      offset: limit * page,
+      include: [
+        {
+          all: true,
+          nested: true,
+        },
+      ]
+    });
+  }
+
   async findById(id) {
     return await Employee.findByPk(id, {
       include: [

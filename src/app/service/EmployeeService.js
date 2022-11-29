@@ -4,8 +4,29 @@ import {
   InternalServerError,
   ValidatorError,
 } from "../errorHandler/errors.js";
+import { getAllEmployees } from "../elastic/EmployeeElastic.js";
 
 class EmployeeService {
+  async getEmployees(req) {
+    const { id, firstName, lastName } = req.query;
+
+    if (id || firstName || lastName) {
+
+      const employees = await getAllEmployees({
+        id,
+        firstName,
+        lastName
+      });
+
+      return employees;
+
+    } else {
+      const employees = EmployeeRepository.getEmployees(req);
+
+      return employees;
+    }
+  }
+
   async findById(id) {
     return await EmployeeRepository.findById(id).catch((error) => {
       console.log(error);
