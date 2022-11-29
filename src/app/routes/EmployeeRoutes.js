@@ -9,4 +9,6 @@ router.get("/employees/:id", EmployeeController.findById);
 
 router.patch("/employees/:id", EmployeeController.updateEmployee);
 
+router.delete("/employees/:id", EmployeeController.deleteEmployee);
+
 export default router;

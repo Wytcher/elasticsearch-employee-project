@@ -79,3 +79,18 @@ export const updateDocument = async(doc) => {
         return;
     });
 }
+
+export const deleteDocument = async (id) => {
+    logger.info(`[ELASTIC_DELETE] Trying to delete into elastic`);
+    await elasticClient.delete({
+        index: process.env.EMPLOYEE_INDEX,
+        id: id
+    }).then(() => {
+        logger.info(`[ELASTIC_DELETE] Document has been deleted successfully`);
+        return;
+    })
+    .catch(err => {
+        logger.error(`[ELASTIC_DELETE_ERROR] Error trying to delete document into elastic error: `, err);
+        return;
+    });
+}

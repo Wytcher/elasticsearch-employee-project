@@ -42,6 +42,15 @@ class EmployeeService {
         );
       });
   }
+
+  async deleteEmployee(req) {
+    return await EmployeeRepository.deleteEmployee(req).catch((error) => {
+      console.log(error);
+      throw new InternalServerError(
+        "An error has ocurred trying to create an employee, try again or contact support"
+      );
+    });
+  }
 }
 
 export default new EmployeeService();
