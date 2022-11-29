@@ -17,16 +17,6 @@ export const saveDocument = async(doc) => {
         department
     } = doc
 
-    console.log(id,
-        firstName,
-        lastName,
-        email,
-        phoneNumber,
-        salary,
-        hireDate,
-        job,
-        department)
-
     logger.info(`[ELASTIC_SAVE] Trying to save into elastic`);
     await elasticClient.create({
         index: process.env.EMPLOYEE_INDEX,
