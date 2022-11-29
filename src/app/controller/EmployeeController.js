@@ -24,6 +24,19 @@ class EmployeeController {
       next(error);
     }
   }
+
+  async updateEmployee(req, res, next) {
+    try {
+      req.body.id = req.params.id;
+      const updatedEmployee = await EmployeeService.updateEmployee(req);
+
+      return res.status(200).send({
+        employee: updatedEmployee,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
-export default new EmployeeController;
+export default new EmployeeController();
