@@ -33,21 +33,24 @@ class EmployeeRepository {
   }
 
   async createEmployee(data) {
-    const createdEmployee = await Employee.sequelize.transaction(async (t) => {
-      return await Employee.create(data, {
-        transaction: t,
-      }).catch((error) => {
-        console.log(error);
-        throw new InternalServerError(
-          "An error has ocurred trying to create the user, please try again or contact support"
-        );
+    const createdEmployee = await Employee.sequelize
+      .transaction(async (t) => {
+        return await Employee.create(data, {
+          transaction: t,
+        }).catch((error) => {
+          console.log(error);
+          throw new InternalServerError(
+            "An error has ocurred trying to create the user, please try again or contact support"
+          );
+        });
+      })
+      .then(async (createdEmployee) => {
+        const employee = await this.findById(createdEmployee.id);
+        saveDocument(employee);
+        return employee;
       });
-    });
 
-    const employeeWithAssoc = await this.findById(createdEmployee.id);
-    saveDocument(employeeWithAssoc);
-
-    return employeeWithAssoc;
+    return createdEmployee;
   }
 
   async updateEmployee(req) {
@@ -82,9 +85,6 @@ class EmployeeRepository {
           }
         );
       })
-      .then(async () => {
-        return await this.findById(id);
-      })
       .catch((error) => {
         logger.info(
           `[EMPLOYEE_ERROR] An error has ocurred trying to update the employee: `,
@@ -93,9 +93,13 @@ class EmployeeRepository {
         throw new InternalServerError(
           "An error has ocurred trying to update the employee, please try again or contact support"
         );
+      })
+      .then(async () => {
+        const employee = await this.findById(id);
+        updateDocument(employee);
+        return employee;
       });
 
-    updateDocument(updatedEmployee);
     return updatedEmployee;
   }
 
@@ -109,6 +113,7 @@ class EmployeeRepository {
         },
       })
         .then(() => {
+          deleteDocument(id);
           return true;
         })
         .catch((error) => {
@@ -122,7 +127,6 @@ class EmployeeRepository {
         });
     });
 
-    deleteDocument(id);
     return deleted;
   }
 }
