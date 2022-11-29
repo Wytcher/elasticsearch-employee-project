@@ -4,6 +4,21 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
+export const getDocument = async(id) => {
+    logger.info(`[ELASTIC_SAVE] Trying to found document in elastic`);
+    return await elasticClient.get({
+        index: process.env.EMPLOYEE_INDEX,
+        id: id
+    }).then(document => {
+        logger.info(`[ELASTIC_GET] Document found`);
+        return document._source;
+    })
+    .catch(err => {
+        logger.error(`[ELASTIC_GET_ERROR]Error trying to get document in elastic error: `, err);
+        return;
+    });
+}
+
 export const saveDocument = async(doc) => {
     const {
         id,

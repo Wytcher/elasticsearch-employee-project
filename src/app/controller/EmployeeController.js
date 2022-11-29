@@ -1,9 +1,10 @@
 import EmployeeService from "../service/EmployeeService.js";
+import { getDocument } from '../elastic/EmployeeElastic.js';
 
 class EmployeeController {
   async findById(req, res, next) {
     try {
-      const employee = await EmployeeService.findById(req.params.id);
+      const employee = await getDocument(req.params.id);
 
       return res.send({
         employee,
