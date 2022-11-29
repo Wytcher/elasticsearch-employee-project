@@ -62,13 +62,13 @@ class EmployeeRepository {
       .transaction(async (t) => {
         return await Employee.update(
           {
-            firstName: firstName,
-            lastName: lastName,
-            phoneNumber: phoneNumber,
-            salary: salary,
-            hireDate: hireDate,
-            jobId: jobId,
-            departmentId: departmentId,
+            firstName,
+            lastName,
+            phoneNumber,
+            salary,
+            hireDate,
+            jobId,
+            departmentId,
           },
           {
             where: {
@@ -91,7 +91,7 @@ class EmployeeRepository {
         );
       });
 
-    updateDocument(updatedEmployee);  
+    updateDocument(updatedEmployee);
     return updatedEmployee;
   }
 }
