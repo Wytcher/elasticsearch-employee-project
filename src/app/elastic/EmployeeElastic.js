@@ -39,11 +39,11 @@ export const getAllEmployees = async (filters) => {
         bool: {
           should: query,
         },
-      }
+      },
     })
     .then((documents) => {
       logger.info(`[ELASTIC_GET_ALL] Employees found`);
-      const result = documents.hits.hits.map(hit => hit._source);
+      const result = documents.hits.hits.map((hit) => hit._source);
       return result;
     })
     .catch((err) => {
@@ -113,6 +113,30 @@ export const saveDocument = async (doc) => {
       logger.error(
         `[ELASTIC_SAVE_ERROR]Error trying to save document into elastic error: `,
         err
+      );
+      return;
+    });
+};
+
+export const bulkDocuments = async (bulk) => {
+  const employeesBulk = bulk.flatMap((doc) => [
+    { index: { _index: process.env.EMPLOYEE_INDEX, _id: doc.id } },
+    doc,
+  ]);
+
+  logger.info(`[ELASTIC_BULK] Trying to save employees bulk into elastic`);
+  await elasticClient
+    .bulk({
+      body: employeesBulk,
+    })
+    .then(() => {
+      logger.info(`[ELASTIC_BULK] Employees bulk has been saved successfully`);
+      return;
+    })
+    .catch((error) => {
+      logger.error(
+        `[ELASTIC_BULK_ERROR]Error trying to save employees bulk into elastic error: `,
+        error
       );
       return;
     });

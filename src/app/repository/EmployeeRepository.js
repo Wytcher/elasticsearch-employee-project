@@ -4,12 +4,12 @@ import {
   saveDocument,
   updateDocument,
   deleteDocument,
+  bulkDocuments
 } from "../elastic/EmployeeElastic.js";
 import logger from "../../logger/logger.js";
 
 class EmployeeRepository {
-
-  async getEmployees(req){
+  async getEmployees(req) {
     const limit = req.query.limit || 1;
     const page = req.query.page || 0;
     return await Employee.findAndCountAll({
@@ -20,12 +20,12 @@ class EmployeeRepository {
           all: true,
           nested: true,
         },
-      ]
+      ],
     });
   }
 
   async findById(id) {
-    return await Employee.findByPk(id, {
+    return await Employee.scope('withoutPassword').findByPk(id, {
       include: [
         {
           all: true,
@@ -67,6 +67,48 @@ class EmployeeRepository {
       });
 
     return createdEmployee;
+  }
+
+  async createMultipleEmployees(data) {
+    const createdEmployees = await Employee.sequelize
+      .transaction(async (t) => {
+        return await Employee.bulkCreate(data, {
+          transaction: t,
+        }).catch((error) => {
+          logger.info(
+            `[EMPLOYEES_CREATE_ERROR] Error trying to bulk create employees, error: `,
+            error
+          );
+          throw new InternalServerError(
+            "An error has ocurred trying to bulik create employees, please try again or contact support"
+          );
+        });
+      })
+      .then(async (results) => {
+        const ids = results.map(result => result.id);
+        console.log(ids);
+        const employees = await Employee.findAll({
+          attributes: {
+            exclude: ['password']
+          },
+          raw:true,
+          nest: true,
+          where: {
+            id: ids
+          },
+          include: [
+            {
+              all: true,
+              nested: true,
+            },
+          ],
+        });
+
+        bulkDocuments(employees)
+        return employees;
+      });
+
+    return createdEmployees;
   }
 
   async updateEmployee(req) {

@@ -7,6 +7,8 @@ router.get("/employees", EmployeeController.getEmployees);
 
 router.post("/employees", EmployeeController.createEmployee);
 
+router.post("/employees/bulk", EmployeeController.createMultiplesEmployees);
+
 router.get("/employees/:id", EmployeeController.findById);
 
 router.patch("/employees/:id", EmployeeController.updateEmployee);

@@ -5,21 +5,20 @@ import {
   ValidatorError,
 } from "../errorHandler/errors.js";
 import { getAllEmployees } from "../elastic/EmployeeElastic.js";
+import logger from "../../logger/logger.js";
 
 class EmployeeService {
   async getEmployees(req) {
     const { id, firstName, lastName } = req.query;
 
     if (id || firstName || lastName) {
-
       const employees = await getAllEmployees({
         id,
         firstName,
-        lastName
+        lastName,
       });
 
       return employees;
-
     } else {
       const employees = EmployeeRepository.getEmployees(req);
 
@@ -38,16 +37,20 @@ class EmployeeService {
 
   async createEmployee(req) {
     return await EmployeeRepository.createEmployee(req.body)
-      .then(async (employee) => {
-        employee.password = undefined;
-        return employee;
-      })
       .catch((error) => {
         console.log(error);
         throw new InternalServerError(
           "An error has ocurred trying to create an employee, try again or contact support"
         );
       });
+  }
+
+  async createMultipleEmployees(req) {
+    return await EmployeeRepository.createMultipleEmployees(req.body).catch(
+      (error) => {
+        throw error;
+      }
+    );
   }
 
   async updateEmployee(req) {

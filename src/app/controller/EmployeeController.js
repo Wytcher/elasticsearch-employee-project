@@ -1,9 +1,8 @@
 import EmployeeService from "../service/EmployeeService.js";
-import { getDocument } from '../elastic/EmployeeElastic.js';
+import { getDocument } from "../elastic/EmployeeElastic.js";
 
 class EmployeeController {
-
-  async getEmployees(req, res, next){
+  async getEmployees(req, res, next) {
     try {
       const employees = await EmployeeService.getEmployees(req);
 
@@ -39,6 +38,20 @@ class EmployeeController {
     }
   }
 
+  async createMultiplesEmployees(req, res, next) {
+    try {
+      const createdEmployees = await EmployeeService.createMultipleEmployees(
+        req
+      );
+
+      return res.status(201).send({
+        employees: createdEmployees,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async updateEmployee(req, res, next) {
     try {
       req.body.id = req.params.id;
@@ -52,13 +65,13 @@ class EmployeeController {
     }
   }
 
-  async deleteEmployee(req, res, next){
+  async deleteEmployee(req, res, next) {
     try {
       const deleted = await EmployeeService.deleteEmployee(req);
 
       return res.status(200).send({
         deleted,
-        message: "Employee has been deleted successfully"
+        message: "Employee has been deleted successfully",
       });
     } catch (error) {
       next(error);
