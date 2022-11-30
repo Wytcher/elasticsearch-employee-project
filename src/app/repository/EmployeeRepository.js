@@ -41,7 +41,6 @@ class EmployeeRepository {
         email: email,
       },
     }).catch((error) => {
-      console.log(error);
       throw new InternalServerError(
         "An error has ocurred trying to find an employee by email, please try again or contact support"
       );
@@ -54,9 +53,12 @@ class EmployeeRepository {
         return await Employee.create(data, {
           transaction: t,
         }).catch((error) => {
-          console.log(error);
+          logger.info(
+            `[EMPLOYEES_CREATE_ERROR] An error has ocurred trying to create the employee, error: `,
+            error
+          );
           throw new InternalServerError(
-            "An error has ocurred trying to create the user, please try again or contact support"
+            "An error has ocurred trying to create the employee, please try again or contact support"
           );
         });
       })
