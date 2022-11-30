@@ -53,7 +53,7 @@ class EmployeeRepository {
         return await Employee.create(data, {
           transaction: t,
         }).catch((error) => {
-          logger.info(
+          logger.error(
             `[EMPLOYEES_CREATE_ERROR] An error has ocurred trying to create the employee, error: `,
             error
           );
@@ -77,7 +77,7 @@ class EmployeeRepository {
         return await Employee.bulkCreate(data, {
           transaction: t,
         }).catch((error) => {
-          logger.info(
+          logger.error(
             `[EMPLOYEES_CREATE_ERROR] Error trying to bulk create employees, error: `,
             error
           );
@@ -146,7 +146,7 @@ class EmployeeRepository {
         );
       })
       .catch((error) => {
-        logger.info(
+        logger.error(
           `[EMPLOYEE_ERROR] An error has ocurred trying to update the employee: `,
           error
         );
@@ -177,7 +177,7 @@ class EmployeeRepository {
           return true;
         })
         .catch((error) => {
-          logger.info(
+          logger.error(
             `[EMPLOYEE_ERROR] An error has ocurred trying to delete the employee: `,
             error
           );
