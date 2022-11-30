@@ -2,7 +2,7 @@ import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../../database/index.js";
 import Department from "./Department.js";
 import Jobs from "./Jobs.js";
-import bcrypt from 'bcryptjs'
+import bcrypt from "bcryptjs";
 
 class Employee extends Model {}
 
@@ -54,13 +54,27 @@ Employee.init(
     tableName: "tb_employees",
     timestamps: true,
     underscored: true,
+    scopes: {
+      withoutPassword: {
+        attributes: {
+          exclude: ["password"],
+        },
+      },
+    },
+    hooks: {
+      beforeBulkCreate: (employees) => {
+        employees.forEach((employee) => {
+          employee.dataValues.password = bcrypt.hashSync(employee.password, 10);
+        });
+      },
+    },
   }
 );
 
-Employee.beforeCreate(async employee => {
+Employee.beforeCreate(async (employee) => {
   const password = employee.password;
   if (!employee) {
-      return;
+    return;
   }
   const hash = await bcrypt.hash(password, 10);
   employee.password = hash;
@@ -71,7 +85,7 @@ Jobs.hasOne(Employee, {
     name: "jobId",
     field: "job_id",
   },
-  as: 'job'
+  as: "job",
 });
 
 Employee.belongsTo(Jobs, {
@@ -79,7 +93,7 @@ Employee.belongsTo(Jobs, {
     name: "jobId",
     field: "job_id",
   },
-  as: 'job'
+  as: "job",
 });
 
 Department.hasOne(Employee, {
@@ -87,7 +101,7 @@ Department.hasOne(Employee, {
     name: "departmentId",
     field: "department_id",
   },
-  as: 'department'
+  as: "department",
 });
 
 Employee.belongsTo(Department, {
@@ -95,7 +109,7 @@ Employee.belongsTo(Department, {
     name: "departmentId",
     field: "department_id",
   },
-  as: 'department'
+  as: "department",
 });
 
 export default Employee;
